@@ -57,7 +57,7 @@ function TickerRenderer() {
        * от чего зависит картинка: скролл, доворот от клика, металл,
        * размеры окна и номер обмера якорей.
        */
-      const signature = `${window.scrollY}|${coinUi.rotY}|${getMetal()}|${
+      const signature = `${window.scrollY}|${coinUi.rotY}|${coinUi.nonce}|${getMetal()}|${
         window.innerWidth
       }x${window.innerHeight}|${coinPath.version}`
 
