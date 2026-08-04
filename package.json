@@ -7,9 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "node scripts/preview.mjs",
     "test": "vitest run",
-    "make:coin": "node scripts/make-coin.mjs"
+    "make:coin": "node scripts/make-coin.mjs",
+    "make:case": "node scripts/make-case.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

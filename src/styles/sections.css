@@ -394,6 +394,20 @@
   aspect-ratio: 206 / 144;
 }
 
+/* Якорь всей коробки: по нему встаёт 3D-модель футляра */
+.packaging__case--premium .case-shell {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  aspect-ratio: auto;
+}
+/* Без WebGL модель не покажется — рисуем прямоугольник заглушки */
+[data-coin-placeholder] .packaging__case--premium .case-shell {
+  border-radius: 24px;
+  background: var(--c-surface-soft);
+  border: 1px solid var(--c-surface);
+}
+
 /* Углубление в центральной пластине акрилового футляра */
 .packaging__case--acrylic .coin-anchor {
   position: absolute;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { Canvas, advance, useStore } from '@react-three/fiber'
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
@@ -8,6 +8,7 @@ import { PixelCamera, fovForViewport } from '../lib/pixelCamera'
 import { coinPath } from '../lib/useCoinEngine'
 import { coinUi, getMetal } from '../lib/coinStore'
 import { Coin } from './Coin'
+import { Case } from './Case'
 
 /**
  * Нейтральное окружение без сетевых запросов.
@@ -110,6 +111,11 @@ export function CoinCanvas() {
       <Coin />
       {/* Вторая монета первого экрана — всегда серебро, стоит на месте */}
       <Coin metal="silver" staticAnchor="hero-silver" />
+
+      {/* Футляр появляется только вместе со своей моделью */}
+      <Suspense fallback={null}>
+        <Case anchor="case-shell" />
+      </Suspense>
     </Canvas>
   )
 }

@@ -19,8 +19,9 @@ export function PackagingPremium() {
       </div>
 
       <div className="packaging__case packaging__case--premium">
-        <div className="case-placeholder" />
-        {/* Якорь в ложементе: соотношение 206×144 задаёт финальный ракурс ~52° */}
+        {/* Якорь всего футляра: 3D-модель встаёт по нему */}
+        <CoinAnchor id="case-shell" className="case-shell" />
+        {/* Якорь в ложементе: соотношение 206×144 задаёт ракурс укладки ≈45.6° */}
         <CoinAnchor id="case" />
       </div>
     </section>
