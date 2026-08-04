@@ -1,19 +1,26 @@
 import { CoinAnchor } from '../ui/CoinAnchor'
 
-/** Выноска: линия от текста к точке на монете (десктоп) */
+/**
+ * Выноска: линия от текстового блока к точке на монете.
+ *
+ * Кружок всегда на том конце, который лежит на монете, а линия уходит
+ * в сторону своего текста: у «рельефа» текст справа, у «гильоширования»
+ * слева, поэтому линии зеркальны.
+ */
 function Leader({ variant }: { variant: 'relief' | 'guilloche' }) {
+  const toCoin = variant === 'relief'
   return (
     <div className={`leader leader--${variant}`} aria-hidden="true">
       <svg viewBox="0 0 205 72" preserveAspectRatio="none">
         <path
-          d={variant === 'relief' ? 'M205 0 L12 57' : 'M0 57 L193 0'}
+          d={toCoin ? 'M205 0 L12 57' : 'M0 0 L193 57'}
           fill="none"
           stroke="currentColor"
           strokeWidth="1"
         />
         <circle
-          cx={variant === 'relief' ? 11 : 194}
-          cy={variant === 'relief' ? 61 : 61}
+          cx={toCoin ? 11 : 194}
+          cy="61"
           r="11"
           fill="var(--c-bg)"
           stroke="currentColor"

@@ -13,6 +13,10 @@ export type CoinState = {
   size: number
   rotX: number
   rotY: number
+  /** id вейпоинта, к которому летит монета */
+  toId: string
+  /** Прогресс подлёта к нему, 0…1 — нужен, чтобы подменять цель в 3D */
+  t: number
 }
 
 export type Measured = {
@@ -109,7 +113,15 @@ export class CoinPath {
   sampleStatic(id: string, scrollY: number): CoinState | null {
     const m = this.statics.get(id)
     if (!m) return null
-    return { x: m.cx, y: m.cyDoc - scrollY, size: m.size, rotX: 0, rotY: 0 }
+    return {
+      x: m.cx,
+      y: m.cyDoc - scrollY,
+      size: m.size,
+      rotX: 0,
+      rotY: 0,
+      toId: id,
+      t: 1,
+    }
   }
 
   sample(scrollY: number, vh: number): CoinState {
@@ -140,9 +152,12 @@ export function samplePath(
     size: pts[i].size,
     rotX: pts[i].rotX,
     rotY: pts[i].rotY,
+    toId: pts[i].id,
+    t: 1,
   })
 
-  if (pts.length === 0) return { x: 0, y: 0, size: 0, rotX: 0, rotY: 0 }
+  if (pts.length === 0)
+    return { x: 0, y: 0, size: 0, rotX: 0, rotY: 0, toId: '', t: 0 }
   if (pts.length === 1 || scrollY <= dock(0)) return at(0)
   if (scrollY >= dock(pts.length - 1)) return at(pts.length - 1)
 
@@ -186,5 +201,7 @@ export function samplePath(
     size: lerp(a.size, b.size, t),
     rotX: lerp(a.rotX, b.rotX, t),
     rotY: lerp(a.rotY, b.rotY, t),
+    toId: b.id,
+    t,
   }
 }

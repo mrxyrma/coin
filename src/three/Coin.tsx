@@ -4,6 +4,7 @@ import * as THREE from 'three'
 
 import { coinPath } from '../lib/useCoinEngine'
 import { coinUi, reportSide, useMetal, type Metal } from '../lib/coinStore'
+import { caseSlot } from '../lib/caseSlot'
 import { makeFaceTexture } from './placeholderTexture'
 import { CoinModel } from './CoinModel'
 
@@ -81,9 +82,17 @@ type CoinProps = {
   metal?: Metal
   /** Статичный якорь вместо полёта по траектории (вторая монета на первом экране) */
   staticAnchor?: string
+  /**
+   * Сдвиг по глубине, доля диаметра.
+   *
+   * На первом экране монеты перекрываются: в макете это плоские картинки
+   * одна поверх другой, а в 3D обе стоят на z = 0 и взаимно протыкают
+   * друг друга. Разводим их по глубине.
+   */
+  depth?: number
 }
 
-export function Coin({ metal, staticAnchor }: CoinProps) {
+export function Coin({ metal, staticAnchor, depth = 0 }: CoinProps) {
   const group = useRef<THREE.Group>(null)
   const storeMetal = useMetal()
   const activeMetal = metal ?? storeMetal
@@ -111,9 +120,24 @@ export function Coin({ metal, staticAnchor }: CoinProps) {
     // Обороты по скроллу и доворот от клика складываются, а не спорят
     const rotY = staticAnchor ? s.rotY : s.rotY + coinUi.rotY
 
+    /*
+     * Финальная посадка целится в реальное углубление футляра, а не
+     * в DOM-якорь: углубление живёт в 3D внутри повёрнутого футляра,
+     * и его экранная позиция не совпадает с плоским якорем вёрстки.
+     * Подмешиваем по мере подлёта, чтобы в конце попасть точно в гнездо.
+     */
+    let x = s.x
+    let y = s.y
+    let px = s.size
+    if (s.toId === 'case' && caseSlot.ready) {
+      x = x + (caseSlot.x - x) * s.t
+      y = y + (caseSlot.y - y) * s.t
+      px = px + (caseSlot.size - px) * s.t
+    }
+
     // Позиции приходят в CSS-пикселях — камера настроена 1:1, пересчёт не нужен
-    g.position.set(s.x - vw / 2, -(s.y - vh / 2), 0)
-    g.scale.setScalar(s.size / MODEL_DIAMETER)
+    g.position.set(x - vw / 2, -(y - vh / 2), depth * px)
+    g.scale.setScalar(px / MODEL_DIAMETER)
     g.rotation.set(s.rotX, rotY, 0)
 
     if (!staticAnchor) {

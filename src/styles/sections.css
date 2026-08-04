@@ -308,19 +308,14 @@
   top: 212px;
 }
 
-/* Выноски-линии (десктоп) — тонкая линия с точкой на конце */
+/*
+ * Выноски-линии (десктоп) — тонкая линия с точкой на конце.
+ * Точку рисует сам SVG; отдельного ::after быть не должно, иначе
+ * на каждой выноске оказывается по два кружка.
+ */
 .leader {
   position: absolute;
   pointer-events: none;
-}
-.leader::after {
-  content: '';
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 1px solid var(--c-ink);
-  background: var(--c-bg);
 }
 .leader--relief {
   left: 56.4%;
@@ -328,8 +323,9 @@
   width: 14.6%;
   height: 72px;
 }
+/* Начинается у правого края текста (29.6%) и упирается в монету */
 .leader--guilloche {
-  left: 42.9%;
+  left: 30%;
   top: 226px;
   width: 14.6%;
   height: 72px;
