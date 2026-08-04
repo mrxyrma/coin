@@ -1,9 +1,6 @@
-import { CoinAnchor } from '../ui/CoinAnchor'
-
 export function Purchase() {
   return (
     <section className="section purchase" id="purchase">
-      <CoinAnchor id="purchase" />
 
       <div className="purchase__text">
         <h2>

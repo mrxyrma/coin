@@ -50,7 +50,6 @@
   --coin-meaning: clamp(280px, 251.8px + 7.51vw, 360px);
   --coin-appearance: clamp(260px, 224.8px + 9.39vw, 360px);
   --coin-unique: clamp(345px, 339.7px + 1.408vw, 360px);
-  --coin-purchase: clamp(160px, 152.6px + 1.97vw, 181px);
 
   /* Сетка. Контент 1400 при 1440 (поля по 20), 345 при 375 (поля по 15). */
   --gutter: clamp(15px, 13.24px + 0.47vw, 20px);
