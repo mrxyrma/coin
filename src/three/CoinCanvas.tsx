@@ -111,6 +111,8 @@ export function CoinCanvas() {
       <Coin />
       {/* Вторая монета первого экрана — всегда серебро, стоит на месте */}
       <Coin metal="silver" staticAnchor="hero-silver" />
+      {/* Монета на экране покупки: отдельная, летящая осталась в футляре */}
+      <Coin staticAnchor="purchase" />
 
       {/* Футляр появляется только вместе со своей моделью */}
       <Suspense fallback={null}>

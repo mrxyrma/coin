@@ -5,15 +5,17 @@ import * as THREE from 'three'
 
 import { coinPath } from '../lib/useCoinEngine'
 import { invalidateCoin } from '../lib/coinStore'
+import { CASE_VIEW_TILT, CASE_VIEW_TURN } from '../lib/trajectory'
 
 export const CASE_MODEL_URL = '/models/case.glb'
 
-/** Максимальный угол раскрытия крышки */
-const OPEN_ANGLE = (105 * Math.PI) / 180
+/** Угол раскрытия крышки. Футляр стоит открытым — монете надо куда падать. */
+const OPEN_ANGLE = (108 * Math.PI) / 180
 
-/** Ракурс футляра на странице — 3/4 сверху, как на референс-рендере */
-const VIEW_TILT = -0.62
-const VIEW_TURN = 0.38
+// Ракурс выводится из угла, под которым в футляр ложится монета —
+// см. вывод в trajectory.ts
+const VIEW_TILT = CASE_VIEW_TILT
+const VIEW_TURN = CASE_VIEW_TURN
 
 /**
  * Футляр в секции «упаковка 2».
@@ -21,13 +23,12 @@ const VIEW_TURN = 0.38
  * Позиция и размер берутся из DOM-якоря — так же, как у монеты, поэтому
  * футляр остаётся на своём месте в вёрстке на любой ширине экрана.
  *
- * Крышка открывается по мере того, как секция подходит к центру экрана.
- * Узел `lid` в модели имеет начало координат на оси петли, поэтому
- * достаточно повернуть его вокруг X.
+ * Футляр стоит раскрытым: монета прилетает и остаётся в ложементе.
+ * Узел `lid` имеет начало координат на оси петли, поэтому раскрытие —
+ * это просто поворот вокруг X.
  */
 export function Case({ anchor }: { anchor: string }) {
   const group = useRef<THREE.Group>(null)
-  const lid = useRef<THREE.Object3D | null>(null)
   const { scene } = useGLTF(CASE_MODEL_URL)
   const size = useThree((s) => s.size)
 
@@ -40,7 +41,10 @@ export function Case({ anchor }: { anchor: string }) {
   }, [scene])
 
   useEffect(() => {
-    lid.current = model.getObjectByName('lid') ?? null
+    // Крышка раскрыта сразу: футляр ждёт монету открытым, а не
+    // распахивается по скроллу
+    const lid = model.getObjectByName('lid')
+    if (lid) lid.rotation.x = -OPEN_ANGLE
     invalidateCoin()
   }, [model])
 
@@ -61,12 +65,6 @@ export function Case({ anchor }: { anchor: string }) {
     g.position.set(s.x - size.width / 2, -(s.y - vh / 2), 0)
     g.scale.setScalar(s.size / width)
     g.rotation.set(VIEW_TILT, VIEW_TURN, 0)
-
-    // Крышка раскрыта тем сильнее, чем ближе секция к центру экрана
-    if (lid.current) {
-      const centered = 1 - Math.min(1, Math.abs(s.y - vh / 2) / (vh * 0.55))
-      lid.current.rotation.x = -OPEN_ANGLE * centered * centered
-    }
   })
 
   return (
