@@ -1,0 +1,552 @@
+/*
+ * Раскладка секций по макету Figma «Прототип 1440» / «Прототип 375».
+ * Все ключевые размеры взяты из макета и переведены в относительные единицы,
+ * чтобы промежуточные ширины (768, 1024, 1920) вели себя предсказуемо.
+ */
+
+/*
+ * Слои страницы.
+ *
+ * Canvas с монетой лежит фиксированно на z-index 1. Стекинг-контекст на
+ * .page тут заводить нельзя: он поднял бы над монетой вообще весь DOM,
+ * включая заглушки футляров, и монета пряталась бы за ними.
+ *
+ * Поэтому порядок задаётся поэлементно:
+ *   z-index 2  — текст и интерфейс: монета пролетает ЗА ними;
+ *   z-index 1  — canvas;
+ *   auto/0     — декоративные поверхности (футляры): монета ПЕРЕД ними.
+ */
+.page {
+  position: relative;
+}
+
+/* Статичные текстовые блоки нужно спозиционировать, иначе z-index не работает */
+.hero__title,
+.meaning__text,
+.appearance__head,
+.appearance__side,
+.unique__head,
+.packaging__text,
+.purchase__text,
+.footer {
+  position: relative;
+}
+
+/* Позиционирование этих задано ниже (absolute) — здесь только слой */
+.hero__title,
+.menu,
+.meaning__text,
+.appearance__head,
+.appearance__side,
+.unique__head,
+.callout,
+.leader,
+.unique__dots,
+.packaging__text,
+.purchase__text,
+.footer {
+  z-index: 2;
+}
+
+.section {
+  width: var(--content);
+  margin: var(--section-gap) auto 0;
+}
+
+.section--bleed {
+  width: 100%;
+}
+
+/* ---------------------------------------------------------------- Якорь монеты
+ * Невидимый блок, занимающий в потоке ровно то место, где монета стоит
+ * в макете. 3D-сцена читает его getBoundingClientRect() — поэтому
+ * траектория адаптируется к любой ширине без единой цифры в JS.
+ */
+.coin-anchor {
+  width: var(--coin-size, 360px);
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+/* Отладка: включается через <body data-coin-debug> */
+[data-coin-debug] .coin-anchor {
+  outline: 1px dashed rgba(0, 0, 0, 0.35);
+  border-radius: 50%;
+}
+
+/* Нет WebGL — монету рисует CSS: серый круг, как в макете */
+[data-coin-placeholder] .coin-anchor {
+  background: var(--c-surface);
+  border-radius: 50%;
+}
+/* Переворачивать нечего — кнопку убираем из потока и из таб-навигации */
+[data-coin-placeholder] .coin-flip {
+  display: none;
+}
+
+/* ---------------------------------------------------------------- UI */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 63px;
+  padding: 0 30px;
+  border-radius: 40px;
+  background: var(--c-surface);
+  font-weight: 600;
+  font-size: var(--t-body);
+  transition: opacity 0.2s ease;
+}
+.btn:hover {
+  opacity: 0.75;
+}
+.btn--light {
+  background: var(--c-bg);
+}
+
+.tabs {
+  display: inline-flex;
+  padding: 5px;
+  border: 1px solid var(--c-ink);
+  border-radius: 40px;
+}
+.tabs__item {
+  min-height: 53px;
+  padding: 0 30px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: var(--t-body);
+  transition: background 0.2s ease;
+}
+.tabs__item[aria-selected='true'] {
+  background: var(--c-surface);
+}
+
+/* ---------------------------------------------------------------- Меню */
+
+.menu {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  min-height: 62px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  background: var(--c-bg);
+}
+
+.menu__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.menu__divider {
+  width: 1.5px;
+  align-self: stretch;
+  background: var(--c-ink);
+}
+.menu__years {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.menu__lang {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: var(--t-small);
+}
+
+/* ---------------------------------------------------------------- 1. Первый экран */
+
+.hero {
+  position: relative;
+  width: 100%;
+  margin-top: 0;
+  padding-bottom: var(--section-gap);
+  text-align: center;
+}
+
+.hero__coins {
+  display: flex;
+  justify-content: center;
+  padding-top: 149px;
+}
+.hero__coins .coin-anchor {
+  --coin-size: var(--coin-hero);
+}
+/* Вторая монета перекрывает первую — в макете смещение 0.607 диаметра */
+.hero__coins .coin-anchor + .coin-anchor {
+  margin-left: calc(var(--coin-hero) * -0.393);
+}
+
+.hero__title {
+  width: var(--content);
+  margin: 50px auto 0;
+}
+.hero__title h1 {
+  max-width: 976px;
+  margin: 0 auto;
+  text-wrap: balance;
+}
+.hero__lead {
+  max-width: 595px;
+  margin: 40px auto 0;
+}
+
+/* ---------------------------------------------------------------- 2. Смысл */
+
+.meaning {
+  text-align: center;
+}
+.meaning__text {
+  max-width: 655px;
+  margin: 0 auto;
+}
+.meaning__text p {
+  margin-top: 40px;
+}
+.meaning__text .btn {
+  margin-top: 40px;
+}
+.meaning .coin-anchor {
+  --coin-size: var(--coin-meaning);
+  margin: 50px auto 0;
+}
+
+/* ---------------------------------------------------------------- 3. Как выглядит */
+
+.appearance__head {
+  max-width: 976px;
+  margin: 0 auto;
+  text-align: center;
+}
+.appearance__head p {
+  max-width: 595px;
+  margin: 40px auto 0;
+}
+.appearance__head .tabs {
+  margin-top: 47px;
+}
+
+.appearance__body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  margin-top: 50px;
+}
+.appearance__stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+/* Кликабельная зона монеты: canvas событий не принимает */
+.coin-flip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--coin-appearance);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  z-index: 2;
+  cursor: pointer;
+}
+.appearance__stage .coin-anchor {
+  --coin-size: var(--coin-appearance);
+}
+.appearance__side {
+  max-width: 477px;
+  padding-top: 88px;
+}
+.appearance__side p {
+  margin-top: 20px;
+}
+
+/* ---------------------------------------------------------------- 4. Уникальность */
+
+.unique__head {
+  max-width: 976px;
+  margin: 0 auto;
+  text-align: center;
+}
+.unique__head p {
+  margin-top: 40px;
+}
+
+.unique__stage {
+  position: relative;
+  margin-top: 67px;
+}
+.unique__stage .coin-anchor {
+  --coin-size: var(--coin-unique);
+  margin: 0 auto;
+}
+
+.callout {
+  position: absolute;
+  max-width: 376px;
+}
+.callout p {
+  margin-top: 20px;
+  font-size: var(--t-small);
+}
+.callout--relief {
+  left: 72.4%;
+  top: -17px;
+}
+.callout--guilloche {
+  left: 2.7%;
+  top: 212px;
+}
+
+/* Выноски-линии (десктоп) — тонкая линия с точкой на конце */
+.leader {
+  position: absolute;
+  pointer-events: none;
+}
+.leader::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--c-ink);
+  background: var(--c-bg);
+}
+.leader--relief {
+  left: 56.4%;
+  top: 0;
+  width: 14.6%;
+  height: 72px;
+}
+.leader--guilloche {
+  left: 42.9%;
+  top: 226px;
+  width: 14.6%;
+  height: 72px;
+}
+.leader svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Мобильные точки-маркеры поверх монеты */
+.unique__dots {
+  display: none;
+}
+
+/* ---------------------------------------------------------------- 5–6. Упаковка */
+
+.packaging {
+  text-align: center;
+}
+.packaging__text {
+  max-width: 609px;
+  margin: 0 auto;
+}
+.packaging__text p {
+  max-width: 521px;
+  margin: 40px auto 0;
+}
+
+.packaging__case {
+  position: relative;
+  margin: 50px auto 0;
+}
+.packaging__case--acrylic {
+  width: min(100%, 593px);
+  aspect-ratio: 593 / 393;
+}
+.packaging__case--premium {
+  width: min(100%, 639px);
+  aspect-ratio: 639 / 690;
+}
+
+/* Заглушка футляра до получения GLB/рендеров */
+.case-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  background: var(--c-surface-soft);
+  border: 1px solid var(--c-surface);
+}
+
+/*
+ * Ложемент: монета лежит в углублении. В макете это эллипс 206×144
+ * на позиции (247, 377) внутри футляра 639×690 — ракурс ≈45.6°
+ * (cos θ = 144/206).
+ */
+.packaging__case--premium .coin-anchor {
+  position: absolute;
+  left: 38.7%;
+  top: 54.6%;
+  width: 32.2%;
+  aspect-ratio: 206 / 144;
+}
+
+/* Углубление в центральной пластине акрилового футляра */
+.packaging__case--acrylic .coin-anchor {
+  position: absolute;
+  left: 34%;
+  top: 33%;
+  width: 32%;
+  aspect-ratio: 206 / 178;
+}
+
+/* ---------------------------------------------------------------- 7. Покупка */
+
+.purchase {
+  text-align: center;
+}
+.purchase .coin-anchor {
+  --coin-size: var(--coin-purchase);
+  margin: 60px auto 0;
+}
+.purchase h2 {
+  margin-top: 35px;
+}
+.purchase p {
+  max-width: 518px;
+  margin: 35px auto 0;
+}
+.purchase .btn {
+  margin-top: 35px;
+}
+
+/* ---------------------------------------------------------------- 8. Подвал */
+
+.footer {
+  padding-bottom: 40px;
+  text-align: center;
+}
+.footer__brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  min-height: 63px;
+}
+.footer__brand .menu__years {
+  font-size: 50px;
+}
+.footer__brand .menu__divider {
+  width: 2.5px;
+  height: 63px;
+  align-self: center;
+}
+.footer__license {
+  max-width: 506px;
+  margin: 70px auto 0;
+  font-size: var(--t-small);
+}
+.footer__bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 70px;
+  font-size: var(--t-small);
+  text-align: left;
+}
+
+/* ================================================================ Мобайл */
+
+@media (max-width: 767px) {
+  .menu {
+    width: var(--content);
+    min-height: 52px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    gap: 0;
+    justify-content: space-between;
+  }
+  .menu__years {
+    font-size: 20px;
+  }
+
+  .hero {
+    text-align: left;
+  }
+  .hero__coins {
+    padding-top: 117px;
+  }
+  .hero__title h1 {
+    text-align: left;
+  }
+  .hero__lead {
+    margin-left: 0;
+    text-align: left;
+  }
+
+  .btn {
+    min-height: 52px;
+    width: 100%;
+  }
+  .tabs__item {
+    min-height: 44px;
+    padding: 0 20px;
+  }
+
+  .appearance__body {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .appearance__side {
+    padding-top: 0;
+  }
+
+  /* Выноски превращаются в точки на монете + карточку под ней */
+  .leader {
+    display: none;
+  }
+  .callout {
+    position: static;
+    max-width: none;
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 20px;
+    background: var(--c-bg);
+  }
+  .unique__dots {
+    display: block;
+  }
+  .unique__dot {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--c-bg);
+  }
+  .unique__dot--relief {
+    left: 80.3%;
+    top: 14.8%;
+    border: 1px solid var(--c-ink);
+  }
+  .unique__dot--guilloche {
+    left: 23.8%;
+    top: 75.9%;
+  }
+
+  .footer__bottom {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* ================================================================ Доступность */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
