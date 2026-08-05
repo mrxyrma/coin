@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "node scripts/preview.mjs",
+    "preview": "vite preview",
     "test": "vitest run",
     "make:coin": "node scripts/make-coin.mjs",
     "make:case": "node scripts/make-case.mjs"

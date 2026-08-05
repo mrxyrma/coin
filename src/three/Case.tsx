@@ -8,7 +8,7 @@ import { invalidateCoin } from '../lib/coinStore'
 import { caseSlot } from '../lib/caseSlot'
 import { CASE_VIEW_TILT, CASE_VIEW_TURN } from '../lib/trajectory'
 
-export const CASE_MODEL_URL = '/models/case.glb'
+export const CASE_MODEL_URL = `${import.meta.env.BASE_URL}models/case.glb`
 
 /** Угол раскрытия крышки. Футляр стоит открытым — монете надо куда падать. */
 const OPEN_ANGLE = (108 * Math.PI) / 180

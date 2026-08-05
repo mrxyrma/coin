@@ -4,7 +4,8 @@ import * as THREE from 'three'
 
 import { invalidateCoin, type Metal } from '../lib/coinStore'
 
-export const COIN_MODEL_URL = '/models/coin.glb'
+// BASE_URL, а не «/»: на GitHub Pages сайт живёт в подкаталоге /<repo>/
+export const COIN_MODEL_URL = `${import.meta.env.BASE_URL}models/coin.glb`
 
 const METAL = {
   gold: { color: '#c9a227', roughness: 0.24 },

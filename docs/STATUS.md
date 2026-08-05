@@ -27,6 +27,26 @@ npx eslint .
 Отладка траектории: **http://localhost:5173/?coin=debug** — DOM-кружок летит по той же
 кривой, что и 3D-монета, с выводом координат, диаметра и угла.
 
+## Деплой на GitHub Pages
+
+`.github/workflows/deploy.yml` собирает и выкладывает сайт на каждый push в `main`.
+Секреты не нужны — токен выдаётся самому workflow.
+
+Разовая настройка в репозитории: **Settings → Pages → Source: GitHub Actions**.
+
+Сайт GitHub Pages живёт в подкаталоге `/<имя-репозитория>/`, поэтому все ссылки на
+ассеты должны быть с префиксом. Имя репозитория нигде не зашито: workflow передаёт его
+через `BASE_PATH`, `vite.config.ts` кладёт в `base`, а код берёт `import.meta.env.BASE_URL`
+(`src/three/CoinModel.tsx`, `src/three/Case.tsx`, `src/ui/Menu.tsx`). **Новые пути к файлам
+в `public/` писать так же — абсолютный «/…» на Pages отвалится в 404.**
+
+Проверить сборку локально ровно в том виде, в каком её увидит Pages:
+
+```bash
+BASE_PATH=/coin/ npm run build && BASE_PATH=/coin/ npm run preview
+# http://localhost:4173/coin/
+```
+
 ## Ключевые файлы
 
 | Файл | Зачем |

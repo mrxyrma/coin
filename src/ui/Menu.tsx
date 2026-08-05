@@ -4,7 +4,11 @@ import { SberLogo } from './SberLogo'
 export function Menu() {
   return (
     <header className="menu">
-      <a className="menu__brand" href="/" aria-label="Сбер, 185 лет">
+      <a
+        className="menu__brand"
+        href={import.meta.env.BASE_URL}
+        aria-label="Сбер, 185 лет"
+      >
         <SberLogo />
         <span className="menu__divider" aria-hidden="true" />
         <span className="menu__years">185</span>
