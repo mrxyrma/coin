@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# Исходные модели от дизайнера — по 95 МБ каждая.
+# В репозиторий не коммитим: GitHub ругается уже на 50 МБ, а Pages
+# выложил бы их в открытый доступ вместе со сборкой.
+# В public/models/ должны лежать только оптимизированные версии.
+public/models/moneta_*.glb
+inspect-model.html
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
