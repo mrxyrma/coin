@@ -72,7 +72,15 @@ const TRIS_BUDGET = 80_000
  * то есть ~720 физических при dpr 2 — 4096 избыточно втрое даже для нормали.
  */
 const TEXTURES = [
-  { slots: /normalTexture/, size: 2048, quality: 95, note: 'нормали: гильош и мелкая фактура' },
+  /*
+   * Карта нормалей — единственная, которую жмём без потерь.
+   *
+   * Замер на первой версии: WebP q95 давал среднюю ошибку 4.44 из 255 и
+   * отклонение больше 5 у 23% пикселей. Для цвета это незаметно, а для
+   * нормалей каждая единица — это поворот нормали, то есть на металле
+   * с низкой шероховатостью прямая рябь по всей поверхности.
+   */
+  { slots: /normalTexture/, size: 2048, lossless: true, note: 'нормали: гильош и мелкая фактура' },
   { slots: /baseColorTexture/, size: 1024, quality: 90, note: 'цвет: почти однородное золото' },
   { slots: /metallicRoughnessTexture/, size: 1024, quality: 90, note: 'металличность и шероховатость' },
 ]
@@ -220,7 +228,7 @@ for (const t of TEXTURES) {
       targetFormat: 'webp',
       slots: t.slots,
       resize: [t.size, t.size],
-      quality: t.quality,
+      ...(t.lossless ? { lossless: true } : { quality: t.quality }),
     }),
   )
 }

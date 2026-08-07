@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { useGLTF } from '@react-three/drei'
+import { useStore } from '@react-three/fiber'
 import * as THREE from 'three'
 
 import { invalidateCoin, type Metal } from '../lib/coinStore'
@@ -34,8 +35,19 @@ const METAL = {
  */
 export function CoinModel({ metal }: { metal: Metal }) {
   const { scene } = useGLTF(COIN_MODEL_URL, false)
+  const store = useStore()
 
   const model = useMemo(() => {
+    /*
+     * Анизотропная фильтрация. Без неё (по умолчанию в three стоит 1) монета
+     * на наклоне мерцает: гильош — это тончайшие радиальные линии, и при
+     * взгляде вскользь на один экранный пиксель приходится десяток линий
+     * текстуры. Обычный мип усредняет их в кашу, анизотропный берёт выборку
+     * вдоль направления сжатия и сохраняет рисунок.
+     */
+    const maxAnisotropy = store.getState().gl.capabilities.getMaxAnisotropy()
+    const anisotropy = Math.min(8, maxAnisotropy)
+
     const model = scene.clone(true)
 
     model.traverse((o) => {
@@ -74,8 +86,20 @@ export function CoinModel({ metal }: { metal: Metal }) {
       o.material = material
     })
 
+    // Фильтрацию ставим всем картам материала: мерцает не только рельеф,
+    // но и мелкая структура в шероховатости
+    model.traverse((o) => {
+      if (!(o instanceof THREE.Mesh)) return
+      const m = o.material as THREE.MeshStandardMaterial
+      for (const map of [m.map, m.normalMap, m.roughnessMap, m.metalnessMap, m.aoMap]) {
+        if (!map || map.anisotropy === anisotropy) continue
+        map.anisotropy = anisotropy
+        map.needsUpdate = true
+      }
+    })
+
     return model
-  }, [scene, metal])
+  }, [scene, metal, store])
 
   useEffect(() => {
     // Модель встала на место, но скролл мог не двигаться — просим кадр
