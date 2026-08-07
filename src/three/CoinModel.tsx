@@ -3,9 +3,23 @@ import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 
 import { invalidateCoin, type Metal } from '../lib/coinStore'
+import { variantConfig } from '../lib/coinVariant'
 
 // BASE_URL, а не «/»: на GitHub Pages сайт живёт в подкаталоге /<repo>/
-export const COIN_MODEL_URL = `${import.meta.env.BASE_URL}models/coin-obverse.glb`
+export const COIN_MODEL_URL = `${import.meta.env.BASE_URL}models/${variantConfig.model}`
+
+/**
+ * Металл для частей модели, у которых его нет.
+ *
+ * В варианте с картой нормалей текстурирована только плашка с рельефом,
+ * а болванка приехала с пустым материалом `Gold`: дефолтные факторы дают
+ * тусклый белый, а не золото. Задаём металл здесь — иначе сравнение двух
+ * вариантов упёрлось бы в дефект выгрузки, а не в сам подход.
+ */
+const METAL = {
+  gold: { color: '#c9a227', roughness: 0.24 },
+  silver: { color: '#cfd3d8', roughness: 0.2 },
+} as const
 
 /**
  * Модель монеты от дизайнера, пропущенная через scripts/optimize-coin.mjs.
@@ -28,6 +42,20 @@ export function CoinModel({ metal }: { metal: Metal }) {
       if (!(o instanceof THREE.Mesh)) return
       const source = o.material as THREE.MeshStandardMaterial
       const material = source.clone()
+
+      if (!source.map) {
+        /*
+         * Часть без запечённых текстур — это голая болванка. Красим её сами:
+         * металличность 1 и цвет отражения, гурт матовее поля не делаем —
+         * насечка живёт в геометрии и сама рассеивает свет.
+         */
+        const { color, roughness } = METAL[metal]
+        material.color = new THREE.Color(color)
+        material.metalness = 1
+        material.roughness = roughness
+        o.material = material
+        return
+      }
 
       if (metal === 'silver') {
         /*

@@ -17,6 +17,7 @@ dist-ssr
 # выложил бы их в открытый доступ вместе со сборкой.
 # В public/models/ должны лежать только оптимизированные версии.
 public/models/moneta_*.glb
+public/new_from_designer/
 inspect-model.html
 
 # Editor directories and files

@@ -4,6 +4,7 @@ import { Suspense, lazy } from 'react'
 
 import { useCoinEngine } from './lib/useCoinEngine'
 import { CoinDebug } from './dev/CoinDebug'
+import { VariantBadge } from './ui/VariantBadge'
 
 import { Hero } from './sections/Hero'
 import { Meaning } from './sections/Meaning'
@@ -36,6 +37,8 @@ export default function App() {
         </Suspense>
       )}
       {debugCoin && <CoinDebug />}
+      {/* Временная метка на время выбора модели — убрать после решения */}
+      <VariantBadge />
 
       <main className="page">
         <Hero />

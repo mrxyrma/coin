@@ -560,3 +560,31 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================ Метка варианта модели (временно)
+
+   Живёт, пока выбираем между геометрическим рельефом и картой нормалей.
+   Обе версии лендинга выглядят одинаково, и без подписи легко перепутать
+   вкладки. После решения удалить вместе с VariantBadge и второй страницей. */
+
+.variant-badge {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.82);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
+.variant-badge a {
+  color: var(--c-accent);
+  text-decoration: underline;
+}
